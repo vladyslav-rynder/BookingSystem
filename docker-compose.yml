@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  booking-system-api:
+    container_name: booking_system_api
+    build:
+      context: .
+      dockerfile: BookingSystem.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=BookingSystemDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;
+    ports:
+      - "5000:8080"
+    depends_on:
+      - sqlserver
+
+  sqlserver:
+    container_name: my-sql-server
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    user: root
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql/data
+
+volumes:
+  mssql_data:
